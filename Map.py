@@ -6,6 +6,8 @@
 # at least 20 edges between those vertexes.  
 # Each building has a name and accurate gps coordinates.
 
+def main():
+   print(f"\n{'='*20} Welcome to Anashe's XULA Graph app! {'='*20}\n")
 
 # List of locations with their Name, latitude and longitude
 locations = [
@@ -21,7 +23,7 @@ graph = {
 }
 
 # TODO Finsih eclidian and halversine distance functions
-def find_euclidean_distance(loc1, loc2):
+def find_euclidean_distance(loc1: tuple[str, float, float], loc2: tuple[str, float, float]):
   pass
 
 def find_haversine_distance():
@@ -30,10 +32,14 @@ def find_haversine_distance():
 
 #Find all adjecent neighbors of a given location
 # graph[key].len 
-def find_neighbors(location: tuple):
+def find_neighbors(location: tuple[str, float, float]):
    pass
 
 #need visted list, set
 # use BFS
-def find_neighbors_within(num_edges: int, location: tuple):
+def find_neighbors_within(num_edges: int, location: tuple[str, float, float]):
    pass
+
+
+if __name__ == '__main__':
+   main()
