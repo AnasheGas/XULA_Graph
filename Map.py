@@ -29,15 +29,15 @@ locations = [
 ]
 
 graph = {
-   locations[0]: [locations[1], locations[2]],
-   locations[1]: [locations[3], locations[4]],
+   locations[0]: [locations[1]],
+   locations[1]: [locations[2], locations[4]],
    locations[2]: [locations[5], locations[6]],  
    locations[3]: [locations[6], locations[8]],
    locations[4]: [locations[7], locations[9], locations[10]],
    locations[5]: [locations[11], locations[12]],
    locations[6]: [locations[0], locations[9]],
    locations[7]: [locations[2], locations[10], locations[12]],
-   locations[8]: [locations[1], locations[11], locations[5]],
+   locations[8]: [locations[1], locations[10], locations[5]],
    locations[9]: [locations[3], locations[12]],
    locations[10]: [locations[4], locations[5], locations[8],locations[0]],
    locations[11]: [locations[0], locations[7]],
@@ -50,9 +50,7 @@ def find_euclidean_distance(loc1, loc2):
    lon1 = loc1[2] 
    lat2 = loc2[1]
    lon2 = loc2[2]
-   return math.sqrt((lat2 - lat1)**2 + (lon2 - lon1)**2)
-
-  
+   return math.sqrt((lat2 - lat1)**2 + (lon2 - lon1)**2) 
 
 
 def find_haversine_distance(loc1, loc2):
@@ -84,17 +82,84 @@ def find_haversine_distance(loc1, loc2):
 #Find all adjecent neighbors of a given location
 # graph[key].len 
 def find_neighbors(location: tuple):
-   pass
+   return graph.get(location, [])
 
 #need visted list, set
 # use BFS
 def find_neighbors_within(num_edges: int, location: tuple):
-   pass
+   num_edges = 2
+   ans = set()
+   neighbors = find_neighbors(location)
+   ans.update(set(neighbors))
+   for neighbor in neighbors:
+      ans.update(set(find_neighbors(neighbor)))
+  
+   return ans
+
+def dijkstra_shortest_path_euclidean(start_loc: tuple, end_loc: tuple):
+    # Initialize all nodes as unvisited with infinite distance
+    unvisited = {loc: float('inf') for loc in graph}
+    unvisited[start_loc] = 0
+    visited = {}
+    previous_nodes = {}
+
+    while unvisited:
+        current_loc = min(unvisited, key=unvisited.get)
+        current_distance = unvisited[current_loc]
+
+        # Stop if remaining nodes are unreachable
+        if current_distance == float('inf'):
+            break
+
+        # Stop if we've reached the target
+        if current_loc == end_loc:
+            break
+
+        # Explore neighbors
+        for neighbor in graph.get(current_loc, []):
+            new_distance = current_distance + find_euclidean_distance(current_loc, neighbor)
+            if new_distance < unvisited.get(neighbor, float('inf')):
+                unvisited[neighbor] = new_distance
+                previous_nodes[neighbor] = current_loc
+
+        # Mark current node as visited
+        visited[current_loc] = current_distance
+        unvisited.pop(current_loc)
+
+    # Reconstruct the shortest path
+    path = []
+    node = end_loc
+    while node in previous_nodes:
+        path.insert(0, node)
+        node = previous_nodes[node]
+
+    if path:
+        path.insert(0, start_loc)
+
+    # Return the path as names and total Euclidean distance
+    path_names = [loc[0] for loc in path]
+    total_distance = visited.get(end_loc, float('inf'))
+
+    return path_names, total_distance
+
+
+
+
+
+
+
 
 def main():
-   print("Graph Locations and their connections:")
-   print(find_euclidean_distance(locations[0], locations[1]))
-   print(find_haversine_distance(locations[0], locations[1]))
+   
+   
+   start = locations[0]  # "Outreach Center"
+   end = locations[2]   # "Convocation Center"
+
+   path, distance = dijkstra_shortest_path_euclidean(start, end)
+
+   print("Shortest path:")
+   print(" -> ".join(path))
+   print("Total Euclidean distance:", distance)
 
 if __name__ == "__main__":
    main()
