@@ -96,6 +96,16 @@ def find_neighbors_within(num_edges: int, location: tuple):
   
    return ans
 
+# Build a weighted graph where each neighbor has a distance
+weighted_graph = {}
+
+for node, neighbors in graph.items():
+    weighted_graph[node] = []
+    for neighbor in neighbors:
+        distance = find_euclidean_distance(node, neighbor)
+        weighted_graph[node].append((neighbor, distance))
+
+
 def dijkstra_shortest_path_euclidean(start_loc: tuple, end_loc: tuple):
     # Initialize all nodes as unvisited with infinite distance
     unvisited = {loc: float('inf') for loc in graph}
